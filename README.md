@@ -1,19 +1,45 @@
-# Pinyin
+# php-Text2Pinyin
 
-[![Test](https://github.com/overtrue/pinyin/actions/workflows/test.yml/badge.svg)](https://github.com/overtrue/pinyin/actions/workflows/test.yml)
-[![Latest Stable Version](https://poser.pugx.org/overtrue/pinyin/v/stable.svg)](https://packagist.org/packages/overtrue/pinyin) [![Total Downloads](https://poser.pugx.org/overtrue/pinyin/downloads.svg)](https://packagist.org/packages/overtrue/pinyin) [![Latest Unstable Version](https://poser.pugx.org/overtrue/pinyin/v/unstable.svg)](https://packagist.org/packages/overtrue/pinyin) [![License](https://poser.pugx.org/overtrue/pinyin/license.svg)](https://packagist.org/packages/overtrue/pinyin)
+说明：composer 改为手动引入，方便嵌入+低版本兼容
 
-:cn: 基于 [mozillazg/pinyin-data](https://github.com/mozillazg/pinyin-data) 词典的中文转拼音工具，更准确的支持多音字的汉字转拼音解决方案。
+原项目地址：https://github.com/overtrue/pinyin
 
-[喜欢我的项目？点击这里支持我](https://github.com/sponsors/overtrue)
+性能测试：
+访问：/benchmark/index.php
+
+建议：正式环境删除benchmark文件夹和tests文件夹
+
+调用更改：
+ - v/yu/ü 的调用，改为sentence增加第三个传入参数，可选值为：`v`、`yu`、`ü`，默认为 `v`，例如：`Pinyin::sentence('旅行', 'none', 'yu')`
+
 
 ## 安装
 
-使用 Composer 安装:
+1. 下载文件包+解压 [点我下载](https://codeload.github.com/Tamshen/php-text-to-pinyin/zip/refs/heads/master)
 
-```bash
-composer require overtrue/pinyin:^5.0
+
+2. 丢到项目目录
+举例目录树：
 ```
+│   │   ...
+│   ├── php-Text2Pinyin
+├── index.php
+```
+
+3.  引入文件
+```php
+// index.php 
+<?php
+require_once dirname(__FILE__) . '/php-text-to-pinyin-master/autoload.php';
+use Overtrue\Pinyin\Pinyin;
+
+// 默认
+$pinyin = Pinyin::sentence('你好，世界');
+echo $pinyin; // nǐ hǎo shì jiè
+
+```
+
+
 
 ## 使用
 
@@ -26,8 +52,6 @@ composer require overtrue/pinyin:^5.0
 - `number` 末尾数字模式的拼音，例如 `pin1 yin1`
 
 ### 返回值
-
-除了 `permalink` 返回字符串外，其它方法都返回集合类型 [`Overtrue\Pinyin\Collection`](https://github.com/overtrue/pinyin/blob/master/src/Collection.php)：
 
 ```php
 use Overtrue\Pinyin\Pinyin;
@@ -184,96 +208,32 @@ $pinyin->toArray();
 >
 > 当单字处理时由于多音字来自词频表中取得常用音，所以在词语环境下可能出现不正确的情况，建议使用多音字处理。
 
-更多使用请参考 [测试用例](https://github.com/overtrue/pinyin/blob/master/tests/PinyinTest.php)。
 
 ## v/yu/ü 的问题
 
 根据国家语言文字工作委员会的规定，`lv`、`lyu`、`lǚ` 都是正确的，但是 `lv` 是最常用的，所以默认使用 `lv`，如果你需要使用其他的，可以在初始化时传入：
 
 ```php
-echo Pinyin::sentence('旅行');
-// lǚ xíng
-
-echo Pinyin::sentence('旅行', 'none');
+echo Pinyin::sentence('旅行2', 'none');
 // lv xing
+echo "<br>";
 
-echo Pinyin::yuToYu()->sentence('旅行', 'none');
+echo Pinyin::sentence('旅行3', 'none',"yu");
 // lyu xing
+echo "<br>";
 
-echo Pinyin::yuToU()->sentence('旅行', 'none');
+echo Pinyin::sentence('旅行4', 'none',"u");
 // lu xing
+echo "<br>";
 
-echo Pinyin::yuToV()->sentence('旅行', 'none');
+echo Pinyin::sentence('旅行5', 'none',"v");
 // lv xing
+echo "<br>";
 ```
 
 > **Warning**
 >
 > 仅在拼音风格为非 `none` 模式下有效。
 
-## 命令行工具
 
-你可以使用命令行来实现拼音的转换：
 
-```bash
-php ./bin/pinyin 带着希望去旅行 --method=sentence --tone-style=symbol
-# dài zhe xī wàng qù lǚ xíng
-```
-
-更多使用方法，可以查看帮助文档：
-
-```bash
-php ./bin/pinyin --help
-
-# Usage:
-#     ./pinyin [chinese] [method] [options]
-# Options:
-#     -j, --json               输出 JSON 格式.
-#     -c, --compact            不格式化输出 JSON.
-#     -m, --method=[method]    转换方式，可选：sentence/sentenceFull/permalink/abbr/nameAbbr/name/passportName/phrase/polyphones/chars.
-#     --no-tone                不使用音调.
-#     --tone-style=[style]     音调风格，可选值：symbol/none/number, default: none.
-#     -h, --help               显示帮助.
-```
-
-## 在 Laravel 中使用
-
-独立的包在这里：[overtrue/laravel-pinyin](https://github.com/overtrue/laravel-pinyin)
-
-## 中文简繁转换
-
-如何你有这个需求，也可以了解我的另一个包：[overtrue/php-opencc](https://github.com/overtrue/php-opencc)
-
-## Contribution
-
-欢迎提意见及完善补充词库：
-
-- 单字拼音错误请添加到：[sources/pathes/chars.txt](https://github.com/overtrue/pinyin/blob/master/sources/pathes/chars.txt)；
-- 词语错误或补齐，请添加到：[sources/pathes/words.txt](https://github.com/overtrue/pinyin/blob/master/sources/pathes/words.txt)；
-
-## 参考
-
-- [mozillazg/pinyin-data](https://github.com/mozillazg/pinyin-data)
-- [详细参考资料](https://github.com/overtrue/pinyin-resources)
-
-## :heart: Sponsor me
-
-[![Sponsor me](https://github.com/overtrue/overtrue/blob/master/sponsor-me.svg?raw=true)](https://github.com/sponsors/overtrue)
-
-如果你喜欢我的项目并想支持它，[点击这里 :heart:](https://github.com/sponsors/overtrue)
-
-## Project supported by JetBrains
-
-Many thanks to Jetbrains for kindly providing a license for me to work on this and other open-source projects.
-
-[![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/overtrue)
-
-## PHP 扩展包开发
-
-> 想知道如何从零开始构建 PHP 扩展包？
->
-> 请关注我的实战课程，我会在此课程中分享一些扩展开发经验 —— [《PHP 扩展包实战教程 - 从入门到发布》](https://learnku.com/courses/creating-package)
-
-# License
-
-MIT

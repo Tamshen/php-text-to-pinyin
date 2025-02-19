@@ -1,9 +1,1 @@
 *.DS_Store
-/vendor
-tmp*
-index.php
-composer.lock
-.idea
-.phpunit.result.cache
-.php-cs-fixer.cache
-cghooks.lock
