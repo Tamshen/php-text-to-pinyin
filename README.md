@@ -1,6 +1,7 @@
-# php-Text2Pinyin
+# php-text-to-pinyin
 
-说明：composer 改为手动引入，方便嵌入+低版本兼容
+
+说明：原项目 composer 改为手动引入，方便嵌入+低版本兼容
 
 原项目地址：https://github.com/overtrue/pinyin
 
